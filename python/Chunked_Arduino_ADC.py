@@ -107,7 +107,7 @@ class Chunked_Arduino_ADC:
 		RETURNS: none
 		NOTES: calling 'start' runs this in a separate thread
 		"""
-		#Indicate processor is running
+		#Indicate thread is running
 		self.record_keep_going.set()
 
 		sh = None
