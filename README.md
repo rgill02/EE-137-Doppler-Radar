@@ -1,6 +1,13 @@
 # EE-137-Doppler-Radar
 A doppler radar for measuring the speed of a vehicle for the Tufts Radar Engineering Class
 
+## Directory Contents
+| Name | Description |
+|------|-------------|
+| data | Contains recordings with the HB-100 |
+| doc | Contains documentation on the HB-100 |
+| src | All the source code |
+
 ## Project Description
 * Using HB100 Module, build a radar (speed gun) to measure a speed of normal size vehicle.
 * The radar should have accuracy of at least of ±5 mph.

@@ -1,7 +1,7 @@
 const unsigned long TS_US = 200;
 const unsigned short MAX_BUF_SIZE = 2501; //2500 samples plus 1 sync
 const unsigned short BUF_LEN_BYTES = MAX_BUF_SIZE * sizeof(unsigned short);
-const unsigned char SAMPLE_PIN = 3;
+const unsigned char SAMPLE_PIN = A0;
 
 unsigned long cur_time;  //Will overflow after 1.2 hours
 unsigned long prev_time = 0;
