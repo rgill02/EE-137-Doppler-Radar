@@ -1,7 +1,7 @@
 const unsigned long TS_US = 200;
 const unsigned short MAX_BUF_SIZE = 2501; //2500 samples plus 1 sync
 const unsigned short BUF_LEN_BYTES = MAX_BUF_SIZE * sizeof(unsigned short);
-const unsigned char SAMPLE_PIN = A0;
+const unsigned char SAMPLE_PIN = A5;
 
 unsigned long cur_time;  //Will overflow after 1.2 hours
 unsigned long prev_time = 0;
@@ -18,7 +18,7 @@ void loop()
 {
   cur_time = micros();
   if ((cur_time - prev_time) >= TS_US) {
-    buf[cur_idx] = analogRead(SAMPLE_PIN);
+    buf[cur_idx] = (unsigned short) analogRead(SAMPLE_PIN);
     cur_idx++;
     if (cur_idx >= MAX_BUF_SIZE) {
       Serial.write((byte *) buf, BUF_LEN_BYTES);
