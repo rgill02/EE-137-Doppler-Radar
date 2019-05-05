@@ -123,7 +123,7 @@ class Replayer:
 			prev_time = time.time() - 1
 			while self.is_running():
 				cur_time = time.time()
-				if (cur_time - prev_time) >= self.chunk_time:
+				if (cur_time - prev_time) >= (4 * self.chunk_time):
 					chunk = self.data[self.chunk_size*ii:self.chunk_size*(ii+1)]
 					self.record_q.put(chunk)
 					ii += 1

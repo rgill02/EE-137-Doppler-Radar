@@ -97,6 +97,40 @@ xlabel('Chunk Number');
 ylabel('Detection (bool)');
 title('Detected Chunks');
 
+%Compute the moving average energy of chunks
+smooth_engs = smoothdata(engs, 'movmean', 3);
+
+%Plot smoothed energy in chunks
+figure;
+plot(smooth_engs);
+xlabel('Chunk Number');
+ylabel('Energy (Joules)');
+title('Smoothed Energy of Chunks');
+
+%Find chunks with a target
+smooth_detected_chunks = [];
+smooth_thresh = 0.17;
+for ii = 1:length(smooth_engs)
+    if smooth_engs(ii) > smooth_thresh
+        smooth_detected_chunks = [smooth_detected_chunks; ii];
+    end
+end
+for ii = 2:length(smooth_engs)-1
+    if (smooth_engs(ii) <= smooth_thresh) && (smooth_engs(ii-1) > smooth_thresh) && (smooth_engs(ii+1) > smooth_thresh)
+        smooth_detected_chunks = [smooth_detected_chunks; ii];
+    end
+end
+smooth_detected_chunks = sort(smooth_detected_chunks);
+
+%Plot detections
+detects_to_plot = zeros(size(smooth_engs));
+detects_to_plot(smooth_detected_chunks) = 1;
+figure;
+plot(detects_to_plot);
+xlabel('Chunk Number');
+ylabel('Detection (bool)');
+title('Smoothed Detected Chunks');
+
 %Compute the velocity for each chunk where a target was detected
 H_det_chunks = H_chunks(detected_chunks,:);
 [M, I] = max(H_det_chunks, [], 2);
