@@ -36,6 +36,15 @@ title('Time Domain');
 h = colorbar;
 ylabel(h, 'Volts');
 
+%Plot time cut
+figure;
+plot(t * 1e3, ac_chunks(43,:));
+xlabel('Time (ms)');
+ylabel('Voltage');
+title('Raw Signal');
+boldify2;
+
+
 %Bring to frequency domain with taper
 H_chunks = fftshift(fft(ac_chunks .* hamming(chunk_size)', nfft, 2), 2);
 
@@ -63,39 +72,38 @@ ylabel(h, 'Magnitude (Count)');
 figure;
 imagesc(v_mph, [], 20*log10(abs(H_chunks)));
 xlabel('Veloctiy (mph)');
-ylabel('Chunk Number');
-title('Frequency Domain');
+ylabel('CPI Number');
+title('Doppler Map');
 xlim([0, max(v_mph)]);
 h = colorbar;
 ylabel(h, 'Magnitude (dB)');
 
 %Compute the energy in each chunk
 engs = sum(abs(ac_chunks) .^ 2, 2);
+thresh = 0.2070;
 
 %Plot energy in chunks
 figure;
 plot(engs);
-xlabel('Chunk Number');
+hold on;
+plot(thresh * ones(size(engs)));
+hold off;
+xlabel('CPI Number');
 ylabel('Energy (Joules)');
 title('Energy of Chunks');
+boldify2;
+legend('Energy', 'Threshold');
 
 %Find chunks with a target
 detected_chunks = [];
-thresh = 0.2070;
 for ii = 1:length(engs)
     if engs(ii) > thresh
         detected_chunks = [detected_chunks; ii];
     end
 end
 
-%Plot detections
-detects_to_plot = zeros(size(engs));
-detects_to_plot(detected_chunks) = 1;
-figure;
-plot(detects_to_plot);
-xlabel('Chunk Number');
-ylabel('Detection (bool)');
-title('Detected Chunks');
+
+
 
 %Compute the moving average energy of chunks
 smooth_engs = smoothdata(engs, 'movmean', 3);
@@ -123,13 +131,29 @@ end
 smooth_detected_chunks = sort(smooth_detected_chunks);
 
 %Plot detections
+detects_to_plot = zeros(size(engs));
+detects_to_plot(detected_chunks) = 1;
+figure;
+subplot(2,1,1);
+plot(detects_to_plot);
+xlabel('CPI Number');
+ylabel('Detection (bool)');
+title('Detections');
+xlim([1 117]);
+ylim([0 1.5]);
+boldify2;
+
+%Plot detections
 detects_to_plot = zeros(size(smooth_engs));
 detects_to_plot(smooth_detected_chunks) = 1;
-figure;
+subplot(2,1,2);
 plot(detects_to_plot);
-xlabel('Chunk Number');
+xlabel('CPI Number');
 ylabel('Detection (bool)');
-title('Smoothed Detected Chunks');
+title('Smoothed Detections');
+xlim([1 117]);
+ylim([0 1.5]);
+boldify2;
 
 %Compute the velocity for each chunk where a target was detected
 H_det_chunks = H_chunks(detected_chunks,:);
@@ -138,12 +162,23 @@ detected_vels = abs(v_mph(I))';
 target_vels = zeros(size(engs));
 target_vels(detected_chunks) = detected_vels;
 
+%Plot Cut
+figure;
+plot(v_mph, abs(H_chunks(96,:)));
+xlabel('Velocity (mph)');
+ylabel('Magnitude (Linear)');
+title('FFT of CPI 96');
+xlim([0 50]);
+boldify2;
+
 %Plot target velocities
 figure;
 plot(target_vels);
-xlabel('Chunk Number');
+xlabel('CPI Number');
 ylabel('Velocity (mph)');
 title('Target Velocities');
+xlim([1, 117]);
+boldify2;
 
 %Try to smooth velocities
 %smoothed_vels = smoothdata(target_vels, 'movmean', 3);
